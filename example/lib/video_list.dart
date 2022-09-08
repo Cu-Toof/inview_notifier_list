@@ -17,6 +17,7 @@ class VideoList extends StatelessWidget {
             return deltaTop < (0.5 * viewPortDimension) &&
                 deltaBottom > (0.5 * viewPortDimension);
           },
+          isContinuousDetected: false,
           itemCount: 10,
           builder: (BuildContext context, int index) {
             return Container(
