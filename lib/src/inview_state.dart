@@ -15,10 +15,9 @@ class InViewState extends ChangeNotifier {
   ///notification whether it is in-view or not. This helps to make recognition easy.
   List<String> _currentInViewIds = [];
   final IsInViewPortCondition? _isInViewCondition;
+  bool _isScrolling = false;
 
-  InViewState(
-      {required List<String> intialIds,
-      bool Function(double, double, double)? isInViewCondition})
+  InViewState({required List<String> intialIds, bool Function(double, double, double)? isInViewCondition})
       : _isInViewCondition = isInViewCondition {
     _contexts = Set<WidgetData>();
     _currentInViewIds.addAll(intialIds);
@@ -50,6 +49,10 @@ class InViewState extends ChangeNotifier {
     return _currentInViewIds.contains(id);
   }
 
+  bool get isScrolling {
+    return _isScrolling;
+  }
+
   ///The listener that is called when the list view is scrolled.
   void onScroll(ScrollNotification notification) {
     // Iterate through each item to check
@@ -64,11 +67,9 @@ class InViewState extends ChangeNotifier {
       }
 
       //Retrieve the viewport related to the scroll area
-      final RenderAbstractViewport viewport =
-          RenderAbstractViewport.of(renderObject)!;
+      final RenderAbstractViewport viewport = RenderAbstractViewport.of(renderObject)!;
       final double vpHeight = notification.metrics.viewportDimension;
-      final RevealedOffset vpOffset =
-          viewport.getOffsetToReveal(renderObject, 0.0);
+      final RevealedOffset vpOffset = viewport.getOffsetToReveal(renderObject, 0.0);
 
       // Retrieve the dimensions of the item
       final Size size = renderObject.semanticBounds.size;
@@ -87,14 +88,15 @@ class InViewState extends ChangeNotifier {
         //prevent changing the value on every scroll if its already the same
         if (!_currentInViewIds.contains(item.id)) {
           _currentInViewIds.add(item.id);
-          notifyListeners();
         }
       } else {
         if (_currentInViewIds.contains(item.id)) {
           _currentInViewIds.remove(item.id);
-          notifyListeners();
         }
       }
+
+      _isScrolling = (notification is ScrollStartNotification || notification is ScrollUpdateNotification);
+      notifyListeners();
     });
   }
 }

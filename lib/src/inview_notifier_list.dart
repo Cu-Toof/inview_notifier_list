@@ -19,6 +19,7 @@ class InViewNotifierList extends InViewNotifier {
     Duration throttleDuration = const Duration(milliseconds: 200),
     Axis scrollDirection = Axis.vertical,
     required IsInViewPortCondition isInViewPortCondition,
+    bool isContinuousDetected = true,
     ScrollController? controller,
     EdgeInsets? padding,
     ScrollPhysics? physics,
@@ -34,6 +35,7 @@ class InViewNotifierList extends InViewNotifier {
           onListEndReached: onListEndReached,
           throttleDuration: throttleDuration,
           isInViewPortCondition: isInViewPortCondition,
+          isContinuousDetected: isContinuousDetected,
           child: ListView.builder(
             padding: padding,
             controller: controller,
@@ -49,9 +51,8 @@ class InViewNotifierList extends InViewNotifier {
         );
 
   static InViewState? of(BuildContext context) {
-    final InheritedInViewWidget widget = context
-        .getElementForInheritedWidgetOfExactType<InheritedInViewWidget>()!
-        .widget as InheritedInViewWidget;
+    final InheritedInViewWidget widget =
+        context.getElementForInheritedWidgetOfExactType<InheritedInViewWidget>()!.widget as InheritedInViewWidget;
     return widget.inViewState;
   }
 }
@@ -73,6 +74,7 @@ class InViewNotifierCustomScrollView extends InViewNotifier {
     Duration throttleDuration = const Duration(milliseconds: 200),
     Axis scrollDirection = Axis.vertical,
     required IsInViewPortCondition isInViewPortCondition,
+    bool isContinuousDetected = true,
     ScrollController? controller,
     ScrollPhysics? physics,
     bool reverse = false,
@@ -87,6 +89,7 @@ class InViewNotifierCustomScrollView extends InViewNotifier {
           onListEndReached: onListEndReached,
           throttleDuration: throttleDuration,
           isInViewPortCondition: isInViewPortCondition,
+          isContinuousDetected: isContinuousDetected,
           child: CustomScrollView(
             slivers: slivers,
             anchor: anchor,
@@ -101,9 +104,8 @@ class InViewNotifierCustomScrollView extends InViewNotifier {
         );
 
   static InViewState? of(BuildContext context) {
-    final InheritedInViewWidget widget = context
-        .getElementForInheritedWidgetOfExactType<InheritedInViewWidget>()!
-        .widget as InheritedInViewWidget;
+    final InheritedInViewWidget widget =
+        context.getElementForInheritedWidgetOfExactType<InheritedInViewWidget>()!.widget as InheritedInViewWidget;
     return widget.inViewState;
   }
 }
@@ -184,8 +186,9 @@ class _InViewNotifierWidgetState extends State<InViewNotifierWidget> {
         child: widget.child,
         builder: (BuildContext context, Widget? child) {
           final bool isInView = state.inView(widget.id);
+          final bool isScrolling = state.isScrolling;
 
-          return widget.builder(context, isInView, child);
+          return widget.builder(context, isInView, isScrolling, child);
         },
       ),
     );
@@ -201,5 +204,6 @@ class _InViewNotifierWidgetState extends State<InViewNotifierWidget> {
 typedef Widget InViewNotifierWidgetBuilder(
   BuildContext context,
   bool isInView,
+  bool isScrolling,
   Widget? child,
 );

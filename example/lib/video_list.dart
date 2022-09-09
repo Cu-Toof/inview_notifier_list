@@ -12,11 +12,10 @@ class VideoList extends StatelessWidget {
         InViewNotifierList(
           scrollDirection: Axis.vertical,
           initialInViewIds: ['0'],
-          isInViewPortCondition:
-              (double deltaTop, double deltaBottom, double viewPortDimension) {
-            return deltaTop < (0.5 * viewPortDimension) &&
-                deltaBottom > (0.5 * viewPortDimension);
+          isInViewPortCondition: (double deltaTop, double deltaBottom, double viewPortDimension) {
+            return deltaTop < (0.5 * viewPortDimension) && deltaBottom > (0.5 * viewPortDimension);
           },
+          isContinuousDetected: false,
           itemCount: 10,
           builder: (BuildContext context, int index) {
             return Container(
@@ -28,12 +27,12 @@ class VideoList extends StatelessWidget {
                 builder: (BuildContext context, BoxConstraints constraints) {
                   return InViewNotifierWidget(
                     id: '$index',
-                    builder:
-                        (BuildContext context, bool isInView, Widget? child) {
+                    builder: (context, isInView, isScrolling, child) {
+                      print('SCROLLING: $isScrolling');
                       return VideoWidget(
-                          play: isInView,
-                          url:
-                              'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
+                        play: isInView,
+                        url: 'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+                      );
                     },
                   );
                 },

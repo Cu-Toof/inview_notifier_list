@@ -13,7 +13,7 @@ class Box extends StatelessWidget {
   Widget build(BuildContext context) {
     return InViewNotifierWidget(
       id: id,
-      builder: (BuildContext context, bool isInView, Widget? child) {
+      builder: (context, isInView, isScrolling, child) {
         final String inViewTxt = isInView ? 'inView' : 'notInView';
 
         return Container(
