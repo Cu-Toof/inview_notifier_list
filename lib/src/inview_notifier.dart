@@ -34,8 +34,6 @@ class InViewNotifier extends StatefulWidget {
   ///as inView.
   final IsInViewPortCondition isInViewPortCondition;
 
-  final bool isContinuousDetected;
-
   InViewNotifier({
     Key? key,
     required this.child,
@@ -44,7 +42,6 @@ class InViewNotifier extends StatefulWidget {
     this.onListEndReached,
     this.throttleDuration = const Duration(milliseconds: 200),
     required this.isInViewPortCondition,
-    this.isContinuousDetected = true,
   })  : assert(endNotificationOffset >= 0.0),
         scrollDirection = child.scrollDirection,
         super(key: key);
@@ -132,10 +129,8 @@ class _InViewNotifierState extends State<InViewNotifier> {
             }
           }
 
-          if (widget.isContinuousDetected) {
-            if (!_streamController!.isClosed && isScrollDirection) {
-              _streamController!.add(notification);
-            }
+          if (!_streamController!.isClosed && isScrollDirection) {
+            _streamController!.add(notification);
           }
 
           return false;

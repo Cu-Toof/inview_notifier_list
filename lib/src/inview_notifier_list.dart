@@ -19,7 +19,6 @@ class InViewNotifierList extends InViewNotifier {
     Duration throttleDuration = const Duration(milliseconds: 200),
     Axis scrollDirection = Axis.vertical,
     required IsInViewPortCondition isInViewPortCondition,
-    bool isContinuousDetected = true,
     ScrollController? controller,
     EdgeInsets? padding,
     ScrollPhysics? physics,
@@ -35,7 +34,6 @@ class InViewNotifierList extends InViewNotifier {
           onListEndReached: onListEndReached,
           throttleDuration: throttleDuration,
           isInViewPortCondition: isInViewPortCondition,
-          isContinuousDetected: isContinuousDetected,
           child: ListView.builder(
             padding: padding,
             controller: controller,
@@ -74,7 +72,6 @@ class InViewNotifierCustomScrollView extends InViewNotifier {
     Duration throttleDuration = const Duration(milliseconds: 200),
     Axis scrollDirection = Axis.vertical,
     required IsInViewPortCondition isInViewPortCondition,
-    bool isContinuousDetected = true,
     ScrollController? controller,
     ScrollPhysics? physics,
     bool reverse = false,
@@ -89,7 +86,6 @@ class InViewNotifierCustomScrollView extends InViewNotifier {
           onListEndReached: onListEndReached,
           throttleDuration: throttleDuration,
           isInViewPortCondition: isInViewPortCondition,
-          isContinuousDetected: isContinuousDetected,
           child: CustomScrollView(
             slivers: slivers,
             anchor: anchor,
