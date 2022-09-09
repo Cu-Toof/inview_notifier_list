@@ -34,6 +34,8 @@ class InViewNotifier extends StatefulWidget {
   ///as inView.
   final IsInViewPortCondition isInViewPortCondition;
 
+  final bool isContinuousDetected;
+
   InViewNotifier({
     Key? key,
     required this.child,
@@ -42,6 +44,7 @@ class InViewNotifier extends StatefulWidget {
     this.onListEndReached,
     this.throttleDuration = const Duration(milliseconds: 200),
     required this.isInViewPortCondition,
+    this.isContinuousDetected = true,
   })  : assert(endNotificationOffset >= 0.0),
         scrollDirection = child.scrollDirection,
         super(key: key);
@@ -84,9 +87,7 @@ class _InViewNotifierState extends State<InViewNotifier> {
   void _startListening() {
     _streamController = StreamController<ScrollNotification>();
 
-    _streamController!.stream
-        .audit(widget.throttleDuration)
-        .listen(_inViewState!.onScroll);
+    _streamController!.stream.audit(widget.throttleDuration).listen(_inViewState!.onScroll);
   }
 
   void _initializeInViewState() {
@@ -105,41 +106,38 @@ class _InViewNotifierState extends State<InViewNotifier> {
         onNotification: (ScrollNotification notification) {
           late bool isScrollDirection;
           //the direction of user scroll up, down, left, right.
-          final AxisDirection scrollDirection =
-              notification.metrics.axisDirection;
+          final AxisDirection scrollDirection = notification.metrics.axisDirection;
 
           switch (widget.scrollDirection) {
             case Axis.vertical:
-              isScrollDirection = scrollDirection == AxisDirection.down ||
-                  scrollDirection == AxisDirection.up;
+              isScrollDirection = scrollDirection == AxisDirection.down || scrollDirection == AxisDirection.up;
               break;
             case Axis.horizontal:
-              isScrollDirection = scrollDirection == AxisDirection.left ||
-                  scrollDirection == AxisDirection.right;
+              isScrollDirection = scrollDirection == AxisDirection.left || scrollDirection == AxisDirection.right;
               break;
           }
           final double maxScroll = notification.metrics.maxScrollExtent;
 
           //end of the listview reached
-          if (isScrollDirection &&
-              maxScroll - notification.metrics.pixels <=
-                  widget.endNotificationOffset) {
+          if (isScrollDirection && maxScroll - notification.metrics.pixels <= widget.endNotificationOffset) {
             if (widget.onListEndReached != null) {
               widget.onListEndReached!();
             }
           }
 
           //when user is not scrolling
-          if (notification is UserScrollNotification &&
-              notification.direction == ScrollDirection.idle) {
+          if (notification is UserScrollNotification && notification.direction == ScrollDirection.idle) {
             if (!_streamController!.isClosed && isScrollDirection) {
               _streamController!.add(notification);
             }
           }
 
-          if (!_streamController!.isClosed && isScrollDirection) {
-            _streamController!.add(notification);
+          if (widget.isContinuousDetected) {
+            if (!_streamController!.isClosed && isScrollDirection) {
+              _streamController!.add(notification);
+            }
           }
+
           return false;
         },
       ),
