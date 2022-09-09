@@ -15,7 +15,6 @@ class VideoList extends StatelessWidget {
           isInViewPortCondition: (double deltaTop, double deltaBottom, double viewPortDimension) {
             return deltaTop < (0.5 * viewPortDimension) && deltaBottom > (0.5 * viewPortDimension);
           },
-          isContinuousDetected: false,
           itemCount: 10,
           builder: (BuildContext context, int index) {
             return Container(
@@ -24,7 +23,7 @@ class VideoList extends StatelessWidget {
               alignment: Alignment.center,
               margin: EdgeInsets.symmetric(vertical: 50.0),
               child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
+                builder: (context, constraints) {
                   return InViewNotifierWidget(
                     id: '$index',
                     builder: (context, isInView, isScrolling, child) {
